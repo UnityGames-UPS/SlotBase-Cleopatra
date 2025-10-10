@@ -1,0 +1,2 @@
+# SlotBase-Cleopatra
+Cleopatra
