@@ -78,6 +78,12 @@ public class SlotBehaviour : MonoBehaviour
   private List<ImageAnimation> SpecialAnimation = new();
   private float DefaultWinLineDelay = 2f;
   private float TurboWinLineDelay = 0.5f;
+  private int[,] initialMatrix = new int[,]
+  {
+    {8, 11, 11, 9, 8 },
+    {10, 10, 10, 10, 9 },
+    {11, 10, 7, 11, 11 }
+  };
   private void Start()
   {
     IsAutoSpin = false;
@@ -298,16 +304,12 @@ public class SlotBehaviour : MonoBehaviour
     {
       return;
     }
-    for (int i = 0; i < images.Count; i++)
+    for (int i = 0; i < initialMatrix.GetLength(0); i++)
     {
-      for (int j = 0; j < images[i].slotImages.Count; j++)
+      for (int j = 0; j < initialMatrix.GetLength(1); j++)
       {
-        int randomIndex = UnityEngine.Random.Range(0, 13);
-        if (j >= 8 && j <= 10 && midTween)
-        {
-          continue;
-        }
-        images[i].slotImages[j].sprite = myImages[randomIndex];
+        int val = initialMatrix[i, j];
+        Tempimages[j].slotImages[i].sprite = myImages[val];
       }
     }
   }
@@ -431,7 +433,7 @@ public class SlotBehaviour : MonoBehaviour
     if (IsTurboOn || IsFreeSpin)
     {
       yield return new WaitForSecondsRealtime(0.3f);
-      StopSpinToggle = true; 
+      StopSpinToggle = true;
     }
     else
     {
@@ -705,7 +707,7 @@ public class SlotBehaviour : MonoBehaviour
   {
     if (audioController && (wins.Count > 0 || jackpot > 0))
       audioController.PlayWLAudio("win");
-    
+
     if (jackpot > 0)
     {
       if (audioController) audioController.PlayWLAudio("megaWin");
