@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
 {
   [Header("Popus UI")]
   [SerializeField] private GameObject MainPopup_Object;
+  [SerializeField] private GameObject WinMainPopup_Object;
 
   [Header("Win Popup")]
   [SerializeField] private Image Win_Image;
@@ -417,7 +418,7 @@ public class UIManager : MonoBehaviour
   private void StartPopupAnim()
   {
     if (WinPopup_Object) WinPopup_Object.SetActive(true);
-    if (MainPopup_Object) MainPopup_Object.SetActive(true);
+    if (WinMainPopup_Object) WinMainPopup_Object.SetActive(true);
 
     audioController.PlayWLAudio("bigwin");
 
@@ -433,7 +434,7 @@ public class UIManager : MonoBehaviour
 
     DelayTween = DOVirtual.DelayedCall(3f, () =>
     {
-      Win_Image.rectTransform.DOScale(Vector3.zero, .5f).SetEase(Ease.InBack).OnComplete(() => ClosePopup(WinPopup_Object));
+      Win_Image.rectTransform.DOScale(Vector3.zero, .5f).SetEase(Ease.InBack).OnComplete(() => CloseWinPopup(WinPopup_Object));
 
       WinBgAnimation.DOScale(Vector3.zero, .5f).SetEase(Ease.InBack).OnComplete(() => ImageRotationTween.Kill());
 
@@ -501,6 +502,23 @@ public class UIManager : MonoBehaviour
 
   private void OpenPopup(GameObject Popup)
   {
+    if (Popup == LBPopup_Object)
+    {
+      if (PaytableMenuObject.activeSelf) PaytableMenuObject.SetActive(false);
+      if (Settings_Object.activeSelf) Settings_Object.SetActive(false);
+    }
+    if (Popup == DisconnectPopup_Object)
+    {
+      if (PaytableMenuObject.activeSelf)PaytableMenuObject.SetActive(false);
+      if (Settings_Object.activeSelf) Settings_Object.SetActive(false);
+      if (LBPopup_Object.activeSelf) LBPopup_Object.SetActive(false);
+    }
+    if (Popup == ReconnectPopup_Object)
+    {
+      if (PaytableMenuObject.activeSelf)PaytableMenuObject.SetActive(false);
+      if (Settings_Object.activeSelf) Settings_Object.SetActive(false);
+      if (LBPopup_Object.activeSelf) LBPopup_Object.SetActive(false);
+    }
     if (Popup) Popup.SetActive(true);
     if (MainPopup_Object) MainPopup_Object.SetActive(true);
   }
@@ -509,6 +527,12 @@ public class UIManager : MonoBehaviour
   {
     if (Popup) Popup.SetActive(false);
     if (MainPopup_Object) MainPopup_Object.SetActive(false);
+  }
+
+  private void CloseWinPopup(GameObject Popup)
+  {
+    if (Popup) Popup.SetActive(false);
+    if (WinMainPopup_Object) WinMainPopup_Object.SetActive(false);
   }
 
   internal void CheckAndClosePopups()
