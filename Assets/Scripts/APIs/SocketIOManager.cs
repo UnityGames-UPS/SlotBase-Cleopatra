@@ -11,7 +11,7 @@ public class SocketIOManager : MonoBehaviour
   [SerializeField] private SlotBehaviour SlotManager;
   [SerializeField] private UIManager UiManager;
   [SerializeField] internal JSFunctCalls JSManager;
-  [SerializeField] internal string TestSocketURI = "https://frnp4zmn-5000.inc1.devtunnels.ms/";
+  [SerializeField] internal string TestSocketURI = "https://devrealtime.dingdinghouse.com";
   [SerializeField] private string TestToken;
   [SerializeField] private GameObject RaycastBlocker;
   internal GameData InitialData = null;
