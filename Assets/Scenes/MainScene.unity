@@ -6262,8 +6262,8 @@ MonoBehaviour:
   SlotManager: {fileID: 2046803210}
   UiManager: {fileID: 377874625}
   JSManager: {fileID: 1604285695}
-  TestSocketURI: http://localhost:5000/
-  TestToken: e07f322852c44485b16488b9e592602b
+  TestSocketURI: https://devrealtime.dingdinghouse.com
+  TestToken: e8b1f84299da4a33b6365c283b9a77e8
   RaycastBlocker: {fileID: 1151408184}
 --- !u!1 &500673622
 GameObject:
