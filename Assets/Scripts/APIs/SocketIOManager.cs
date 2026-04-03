@@ -23,19 +23,14 @@ public class SocketIOManager : MonoBehaviour
   internal bool SetInit = false;
 
   internal string SocketURI = null;
-  protected string NameSpace = "playground";
+  protected string NameSpace = "playground-singleplayer";
   protected string myAuth;
-  protected string nameSpace;
 
   private SocketManager Manager;
   private Socket GameSocket;
-  private const int maxReconnectionAttempts = 6;
-  private readonly TimeSpan reconnectionDelay = TimeSpan.FromSeconds(10);
 
   private bool isConnected = false; //Back2 Start
   private bool hasEverConnected = false;
-  private const int MaxReconnectAttempts = 5;
-  private const float ReconnectDelaySeconds = 2f;
 
   private float lastPongTime = 0f;
   private float pingInterval = 2f;
@@ -150,7 +145,7 @@ public class SocketIOManager : MonoBehaviour
     var data = JsonUtility.FromJson<AuthTokenData>(jsonData);
     SocketURI = data.socketURL;
     myAuth = data.cookie;
-    nameSpace = data.nameSpace;
+    NameSpace = data.nameSpace;
     // Proceed with connecting to the server using myAuth and socketURL
   }
 
