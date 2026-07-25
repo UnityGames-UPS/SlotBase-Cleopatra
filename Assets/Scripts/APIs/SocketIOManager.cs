@@ -44,9 +44,68 @@ public class SocketIOManager : MonoBehaviour
   private const int MaxMissedPongs = 5;
   private Coroutine PingRoutine; //Back2 end
 
+  private bool hasFocus = true;
+  private float focusLostTime = 0f;
+  private Coroutine focusCheckRoutine;
+  private float maxBackgroundTime = 60f;
+  private bool isExiting = false;
+  private bool isBeingDestroyed = false;
+
   private void Awake()
   {
     SetInit = false;
+  }
+
+  private void OnDestroy()
+  {
+    isBeingDestroyed = true;
+  }
+
+  internal void HandleFocusChange(bool focus)
+  {
+    hasFocus = focus;
+
+    if (!focus)
+    {
+      focusLostTime = Time.time;
+      if (focusCheckRoutine == null && !isExiting && !isBeingDestroyed)
+        focusCheckRoutine = StartCoroutine(FocusTimeoutCheck());
+    }
+    else
+    {
+      if (focusCheckRoutine != null)
+      {
+        StopCoroutine(focusCheckRoutine);
+        focusCheckRoutine = null;
+      }
+    }
+  }
+
+  private IEnumerator FocusTimeoutCheck()
+  {
+    while (!hasFocus && !isExiting && !isBeingDestroyed)
+    {
+      if (Time.time - focusLostTime >= maxBackgroundTime)
+      {
+        Debug.LogWarning("[SOCKET] Background timeout — closing connection");
+        isConnected = false;
+        ResetPingRoutine();
+
+        if (Manager != null)
+        {
+          try { Manager.Close(); }
+          catch (Exception e) { Debug.LogWarning($"[SOCKET] Focus close error: {e.Message}"); }
+        }
+
+        UiManager.DisconnectionPopup();
+        focusCheckRoutine = null;
+        yield break;
+      }
+
+      yield return new WaitForSecondsRealtime(1f);
+    }
+
+    focusCheckRoutine = null;
   }
 
   private void Start()
@@ -316,6 +375,7 @@ public class SocketIOManager : MonoBehaviour
 
   internal IEnumerator CloseSocket() //Back2 Start
   {
+    isExiting = true;
     RaycastBlocker.SetActive(true);
     ResetPingRoutine();
 

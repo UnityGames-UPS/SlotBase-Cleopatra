@@ -81,11 +81,26 @@ public class UIManager : MonoBehaviour
 
   [SerializeField] private SocketIOManager socketManager;
 
+  [SerializeField] private JSFunctCalls jsFunctCalls;
+
   private bool isMusic = true;
   private bool isSound = true;
   private bool isExit = false;
   private bool isMenu = false;
 
+  private void Awake()
+  {
+    if (jsFunctCalls != null)
+      jsFunctCalls.RegisterVisibilityListener(gameObject.name);
+  }
+
+  public void OnFocusChanged(string value)
+  {
+    bool focused = value == "1";
+    Debug.Log("UNITY FOCUS CHANGED: " + value + " (focused: " + focused + ")");
+    audioController?.SetMuteAll(!focused);
+    socketManager?.HandleFocusChange(focused);
+  }
 
   private void Start()
   {

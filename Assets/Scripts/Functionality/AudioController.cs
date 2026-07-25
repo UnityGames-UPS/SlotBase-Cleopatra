@@ -10,6 +10,10 @@ public class AudioController : MonoBehaviour
   [SerializeField] private AudioSource bg_audioBonus;
   [SerializeField] private AudioSource audioPlayer_Bonus;
 
+  private bool soundMuted = false;
+  private bool musicMuted = false;
+  private bool focusForceMuted = false;
+
   private void Start()
   {
     if (bg_adudio) bg_adudio.Play();
@@ -99,19 +103,50 @@ public class AudioController : MonoBehaviour
 
   internal void ToggleMute(bool toggle, string type)
   {
+    // A direct UI toggle proves the game currently has real interactive focus,
+    // so it must win over a stale/stuck forced-mute from a focus signal that
+    // never got its matching regain event (can happen in WebView embeds).
+    focusForceMuted = false;
+
     switch (type)
     {
       case "music":
-        bg_adudio.mute = toggle;
-        bg_audioBonus.mute = toggle;
+        musicMuted = toggle;
         break;
       case "sound":
-        audioPlayer_button.mute = toggle;
-        audioPlayer_wl.mute = toggle;
-        audioSpin_button.mute = toggle;
-        audioPlayer_Bonus.mute = toggle;
+        soundMuted = toggle;
         break;
     }
+    ApplyMuteState();
+  }
+
+  // Regaining focus must never un-mute audio the user muted, so this only
+  // layers a forced mute on top of the existing sound/music toggle state.
+  internal void SetMuteAll(bool mute)
+  {
+    focusForceMuted = mute;
+    ApplyMuteState();
+  }
+
+  private void ApplyMuteState()
+  {
+    ApplySourceMute(bg_adudio, focusForceMuted || musicMuted);
+    ApplySourceMute(bg_audioBonus, focusForceMuted || musicMuted);
+    ApplySourceMute(audioPlayer_button, focusForceMuted || soundMuted);
+    ApplySourceMute(audioPlayer_wl, focusForceMuted || soundMuted);
+    ApplySourceMute(audioSpin_button, focusForceMuted || soundMuted);
+    ApplySourceMute(audioPlayer_Bonus, focusForceMuted || soundMuted);
+  }
+
+  // CheckFocusFunction (the native/editor OnApplicationFocus path) pauses sources
+  // independently of this mute flag. Un-pausing here whenever a source becomes
+  // audible keeps the two mechanisms from desyncing — otherwise a source paused
+  // by a focus event stays silent even after this unmutes it, until the next
+  // focus-regain event happens to call UnPause() itself.
+  private void ApplySourceMute(AudioSource source, bool mute)
+  {
+    source.mute = mute;
+    if (!mute) source.UnPause();
   }
 
 }
