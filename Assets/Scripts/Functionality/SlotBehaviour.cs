@@ -326,11 +326,22 @@ public class SlotBehaviour : MonoBehaviour
     CompareBalance();
     uiManager.InitialiseUIData(SocketManager.InitUiData.paylines);
   }
+
+  internal void UpdateBalanceDisplay(double newBalance)
+  {
+    currentBalance = newBalance;
+    if (Balance_text) Balance_text.text = newBalance.ToString("f3");
+    CompareBalance();
+  }
   #endregion
 
   private void OnApplicationFocus(bool focus)
   {
-    audioController.CheckFocusFunction(focus, CheckSpinAudio);
+    audioController.SetMuteAll(!focus);
+    if (focus && !CheckSpinAudio)
+    {
+      audioController.StopWLAaudio();
+    }
   }
 
   //function to populate animation sprites accordingly

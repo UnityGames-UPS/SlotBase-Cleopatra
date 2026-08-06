@@ -70,18 +70,18 @@
     var config = {
       dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
       frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-      #if USE_THREADS
+#if USE_THREADS
       workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
-      #endif
+#endif
 #if USE_WASM
       codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
-      #endif
+#endif
 #if MEMORY_FILENAME
       memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
-      #endif
+#endif
 #if SYMBOLS_FILENAME
       symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
-      #endif
+#endif
       streamingAssetsUrl: "StreamingAssets",
       companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
     productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
